@@ -2,6 +2,8 @@ const Users = db.users;
 
 const bcrypt = require('bcrypt');
 
+const config = require("../../config/auth.config.js");
+
 const jwt = require("jsonwebtoken");
 
 exports.findAll = (req, res) => {
@@ -16,7 +18,7 @@ exports.findAll = (req, res) => {
 };
 
 exports.create = (req, res) => {
-    if(!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.type){
+    if(!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.role){
         return res.json({
             success : 0,
             message : "No field should be empty !"
@@ -39,7 +41,7 @@ exports.create = (req, res) => {
                 lastname : req.body.lastname,
                 email : req.body.email,
                 password : bcrypt.hashSync(req.body.password, salt),
-                role : req.body.type
+                role : req.body.role
             };
 
             Users.create(user).then(data => {
@@ -68,24 +70,29 @@ exports.login = (req, res) =>{
         where : {email : req.body.email}
     }).then(data => {
         if(!data){
-            return res.json({
+            return res.status(404).send({
                 success : 0, 
-                message : "Invalid email"
+                message : "Il n'existe aucun compte avec cet email"
             });
         }else{
             const result = bcrypt.compareSync(req.body.password, data.password);
             data.password = undefined;
             if(result) {
-                const jsontoken = jwt.sign({data : data}, "dsqdqdqd", {expiresIn: "1h" });
+                const jsontoken = jwt.sign({data : data}, config.secret, {expiresIn: "1h" });
                 return res.json({
                     success : 1,
                     message : "Login successfull",
+                    id: data.idusers,
+                    email : data.email,
+                    firstname : data.firstname,
+                    lastname : data.lastname,
+                    role : data.role,
                     token : jsontoken
                 });
             }else{
-                return res.json({
+                return res.status(404).send({
                     success : 0, 
-                    message : "Invalid password"
+                    message : "Mot de passe incorrect"
                 });
             }
         }

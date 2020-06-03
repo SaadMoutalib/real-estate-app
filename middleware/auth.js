@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
+const config = require("../config/auth.config.js");
 
 module.exports = {
     authenticate : (req, res, next) => {
         let token = req.get('authorization');
         if(token){
             token = token.slice(7);
-            jwt.verify(token, "dsqdqdqd", (err, decoded) => {
+            jwt.verify(token, config.secret, (err, decoded) => {
                 if(err){
                     return res.json({
                         sucess : 0,

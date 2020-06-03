@@ -37,7 +37,7 @@ module.exports = sequelize => {
       autoIncrement: false,
       field: "password"
     },
-    type: {
+    role: {
       type: DataTypes.STRING(45),
       allowNull: false,
       primaryKey: false,

@@ -1,0 +1,3 @@
+export const GET_ANNONCES = 'GET_ANNONCES';
+export const ADD_ANNONCE = 'ADD_ANNONCE';
+export const DELETE_ANNONCE = 'DELETE_ANNONCE';

@@ -2,12 +2,12 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const attributes = {
-    idannonces: {
-      type: DataTypes.INTEGER,
+    _id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
-      field: "idannonces",
+      field: "_id",
     },
     titre: {
       type: DataTypes.STRING(45),
@@ -22,6 +22,26 @@ module.exports = (sequelize) => {
       primaryKey: false,
       autoIncrement: false,
       field: "prix",
+    },
+    surface: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "surface",
+    },
+    nbrChambres: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: "nbrChambres",
+    },
+    nbrSallesDeBain: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: "nbrSallesDeBain",
+    },
+    nbrPieces: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: "nbrPieces",
     },
     tel: {
       type: DataTypes.STRING(45),
@@ -45,11 +65,16 @@ module.exports = (sequelize) => {
       field: "etat",
     },
     description: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING,
       allowNull: true,
       primaryKey: false,
       autoIncrement: false,
       field: "description",
+    },
+    favoris: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      field: "favoris",
     },
     date_creation: {
       type: DataTypes.DATE,
@@ -58,6 +83,11 @@ module.exports = (sequelize) => {
       autoIncrement: false,
       defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
       field: "date_creation",
+    },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: "En cours",
+      field: "status",
     },
   };
   const options = {

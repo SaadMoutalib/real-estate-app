@@ -1,29 +1,52 @@
 import React, { Component } from "react";
-import FormAnnonceDetails from "./FormAnnonceDetails";
-import FormImmobilierDetails from "./FormImmobilierDetails";
-import FormUserInput from "./FormUserInput";
-import ConfirmForm from "./ConfirmForm";
-import FormSuccess from "./FormSuccess";
+import FormAnnonceDetails from "./WizardSteps/FormAnnonceDetails";
+import FormImmobilierDetails from "./WizardSteps/FormImmobilierDetails";
+import FormUserInput from "./WizardSteps/FormUserInput";
+import ConfirmForm from "./WizardSteps/ConfirmForm";
+import FormSuccess from "./WizardSteps/FormSuccess";
 
-export class AnnonceWizard extends Component {
-  state = {
-    step: 1,
-    type: "",
-    etat: "",
-    adresse: {
-      adresse: "",
-      ville: "",
-      region: "",
-      quartier: "",
-    },
-    surface: 0,
-    prix: 0,
-    nbrPieces: 0,
-    nbrChambres: 0,
-    nbeSDB: 0,
-    titre: "",
-    description: "",
-    tel: "",
+class AnnonceWizard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 1,
+      type: "",
+      etat: "",
+      adresse: {
+        adresse: "",
+        ville: null,
+        region: null,
+      },
+      fonctionalite: {
+        jardin: false,
+        piscine: false,
+        terasse: false,
+        garage: false,
+        ascenseur: false,
+        concierge: false,
+      },
+      surface: 0,
+      prix: 0,
+      nbrPieces: 0,
+      nbrChambres: 0,
+      nbrSallesDeBain: 0,
+      titre: "",
+      description: "",
+      tel: "",
+      pictures: {
+        files: [],
+        urls: [],
+      },
+    };
+  }
+
+  handleFonctionalite = (input) => (e) => {
+    this.setState({
+      fonctionalite: {
+        ...this.state.fonctionalite,
+        [input]: !this.state.fonctionalite[input],
+      },
+    });
   };
 
   nextStep = () => {
@@ -41,43 +64,33 @@ export class AnnonceWizard extends Component {
   };
 
   handleChange = (input) => (e) => {
-    this.setState({ [input]: e.target.value });
+    e.persist();
+    const { value } = e.target;
+    this.setState({ [input]: value });
   };
 
   handleAdresseChange = (input) => (e) => {
+    e.persist();
+    const { value } = e.target;
+    if (input !== "adresse") {
+      let obj = JSON.parse(value);
+      this.setState({
+        adresse: { ...this.state.adresse, [input]: obj },
+      });
+    } else {
+      this.setState({
+        adresse: { ...this.state.adresse, [input]: value },
+      });
+    }
+  };
+
+  onDrop = (file, url) => {
     this.setState({
-      adresse: { ...this.state.adresse, [input]: e.target.value },
+      pictures: { ...this.state.pictures, files: file, urls: url },
     });
   };
 
-  render() {
-    const { step } = this.state;
-    const {
-      type,
-      etat,
-      adresse,
-      surface,
-      prix,
-      nbrPieces,
-      nbrChambres,
-      nbeSDB,
-      titre,
-      description,
-      tel,
-    } = this.state;
-    const values = {
-      type,
-      etat,
-      adresse,
-      surface,
-      prix,
-      nbrPieces,
-      nbrChambres,
-      nbeSDB,
-      titre,
-      description,
-      tel,
-    };
+  Step = (values, step) => {
     switch (step) {
       case 1:
         return (
@@ -94,6 +107,7 @@ export class AnnonceWizard extends Component {
             nextStep={this.nextStep}
             prevStep={this.prevStep}
             handleChange={this.handleChange}
+            handleFonctionalite={this.handleFonctionalite}
             values={values}
           />
         );
@@ -103,6 +117,7 @@ export class AnnonceWizard extends Component {
             nextStep={this.nextStep}
             prevStep={this.prevStep}
             handleChange={this.handleChange}
+            onDrop={this.onDrop}
             values={values}
           />
         );
@@ -118,6 +133,62 @@ export class AnnonceWizard extends Component {
       case 5:
         return <FormSuccess />;
     }
+  };
+
+  render() {
+    const { step } = this.state;
+    const {
+      type,
+      etat,
+      adresse,
+      fonctionalite,
+      surface,
+      prix,
+      nbrPieces,
+      nbrChambres,
+      nbrSallesDeBain,
+      titre,
+      description,
+      tel,
+      pictures,
+    } = this.state;
+    const values = {
+      type,
+      etat,
+      adresse,
+      fonctionalite,
+      surface,
+      prix,
+      nbrPieces,
+      nbrChambres,
+      nbrSallesDeBain,
+      titre,
+      description,
+      tel,
+      pictures,
+    };
+
+    return (
+      <>
+        <div style={{ padding: "50px" }} className="container">
+          <div className="row">
+            <div className="col-lg-12">
+              <div style={{ paddingBottom: "50px" }} className="text-center">
+                <span className={"step " + (step >= 1 && "active")}> </span>
+                <span className={"step " + (step >= 2 && "active")}> </span>
+                <span className={"step " + (step >= 3 && "active")}></span>
+                <span className={"step " + (step == 4 && "active")}></span>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-10 mb-5 mb-lg-0">
+              {this.Step(values, step)}
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 }
 

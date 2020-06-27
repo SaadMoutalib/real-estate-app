@@ -84,7 +84,7 @@ exports.login = (req, res) => {
         const result = bcrypt.compareSync(req.body.password, data.password);
         data.password = undefined;
         if (result) {
-          const jsontoken = jwt.sign({ id: data.idusers }, config.secret, {
+          const jsontoken = jwt.sign({ id: data._id }, config.secret, {
             expiresIn: "1h",
           });
           return res.status(200).send({
@@ -135,6 +135,60 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {};
+exports.updatePassword = (req, res) => {
+  Users.findOne({
+    where: { email: req.body.email },
+  })
+    .then((data) => {
+      if (!data) {
+        return res.status(400).send({
+          message: "Il n'existe aucun compte avec cet email",
+        });
+      } else {
+        console.log(req.body.password);
+        const result = bcrypt.compareSync(req.body.password, data.password);
 
-exports.delete = (req, res) => {};
+        data.password = undefined;
+        console.log(result);
+        if (result) {
+          const salt = bcrypt.genSaltSync(10);
+          const newPassword = bcrypt.hashSync(req.body.newPassword, salt);
+          Users.update(
+            { password: newPassword },
+            {
+              where: { _id: req.params.id },
+            }
+          )
+            .then((data) => {
+              return res.status(200).send(data);
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message: err,
+              });
+            });
+        } else {
+          return res.status(401).send({
+            message: "Mot de passe incorrect",
+          });
+        }
+      }
+    })
+    .catch((err) => {
+      res.status(400).send({
+        message: err.message,
+      });
+    });
+};
+
+exports.delete = (req, res) => {
+  Users.destroy({
+    where: {
+      _id: req.params.id,
+    },
+  }).catch((err) => {
+    res.status(500).send({
+      message: err,
+    });
+  });
+};

@@ -8,6 +8,7 @@ module.exports = (app) => {
   router.get("/", authenticate, users.findAll);
   //router.get("/:id", authenticate, users.findOne);
   router.get("/user", authenticate, users.findOne);
+  router.patch("/update/:id", authenticate, users.updatePassword);
 
   app.use("/api/users", router);
 };

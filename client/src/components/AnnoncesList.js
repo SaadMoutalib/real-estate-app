@@ -1,67 +1,77 @@
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
-import { getAnnonces } from "../actions/annonceActions";
-
-import {
-  Card,
-  CardImg,
-  CardText,
-  CardBody,
-  CardTitle,
-  CardSubtitle,
-  Button,
-  Col,
-  Row,
-} from "reactstrap";
-
-import PropTypes from "prop-types";
-const spinner = (
-  <Fragment>
-    <div className="d-flex justify-content-center">
-      <span className="spinner-border"></span>
-    </div>
-  </Fragment>
-);
+import React, { Component } from "react";
+import NumberFormat from "react-number-format";
 
 class AnnoncesList extends Component {
-  componentDidMount() {
-    this.props.getAnnonces();
-    console.log(this.props.annonce);
-  }
-
   render() {
-    const { annonces, loading } = this.props.annonce;
+    const { annonces } = this.props.annonce;
+    const array = Array.from(annonces);
     return (
-      <div>
-        {loading && spinner}
-
-        <Row>
-          {annonces.map((annonce) => (
-            <Col key={annonce.idannonces} xs="3">
-              <Card>
-                <CardImg top width="100%" src="" alt="Card image cap" />
-                <CardBody>
-                  <CardTitle>{annonce.titre}</CardTitle>
-                  <CardSubtitle>Card subtitle</CardSubtitle>
-                  <CardText>{annonce.description}</CardText>
-                  <Button>Button</Button>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
+      <>
+        {array.map((annonce, i) => (
+          <div key={i} className="col-xl-4 col-md-6 col-lg-4">
+            <div className="single_property">
+              <div className="property_thumb">
+                <div className="property_tag">A vendre</div>
+                <img src={annonce.photos[0].url} alt={annonce.photos[0].name} />
+              </div>
+              <div className="property_content">
+                <div className="main_pro">
+                  <h3>
+                    <a href={"/annonce/" + annonce._id}>{annonce.titre}</a>
+                  </h3>
+                  <div className="mark_pro">
+                    <img src="/img/svg_icon/location.svg" alt="" />
+                    <span>
+                      {" " +
+                        annonce.adresse.adr +
+                        ", " +
+                        annonce.adresse.ville.nomVille}
+                    </span>
+                  </div>
+                  <span className="amount">
+                    {" "}
+                    <NumberFormat
+                      value={annonce.prix}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      suffix={" DH"}
+                    />
+                  </span>
+                </div>
+              </div>
+              <div className="footer_pro">
+                <ul>
+                  <li>
+                    <div className="single_info_doc">
+                      <img src="/img/svg_icon/square.svg" alt="" />
+                      <span>{annonce.surface} m²</span>
+                    </div>
+                  </li>
+                  {annonce.type === "Terrain" ||
+                  annonce.type === "Bureaux" ? null : (
+                    <>
+                      <li>
+                        <div className="single_info_doc">
+                          <img src="/img/svg_icon/bed.svg" alt="" />
+                          <span>{annonce.nbrChambres} Chambres</span>
+                        </div>
+                      </li>
+                    </>
+                  )}
+                  <li>
+                    <div className="single_info_doc">
+                      <img src="/img/svg_icon/bath.svg" alt="" />
+                      <span>{annonce.nbrSallesDeBain} Salles de bain</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
     );
   }
 }
 
-AnnoncesList.propTypes = {
-  getAnnonces: PropTypes.func.isRequired,
-  annonce: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-  annonce: state.annonce,
-});
-
-export default connect(mapStateToProps, { getAnnonces })(AnnoncesList);
+export default AnnoncesList;

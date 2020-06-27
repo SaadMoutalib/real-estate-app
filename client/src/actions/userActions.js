@@ -7,6 +7,8 @@ import {
   LOGOUT_SUCCESS,
   REGISTER_SUCCESS,
   REGISTER_FAIL,
+  CHANGE_PASSWORD_FAIL,
+  CHANGE_PASSWORD,
 } from "./types";
 
 import { returnErrors, clearErrors } from "./errorActions";
@@ -14,22 +16,25 @@ import { returnErrors, clearErrors } from "./errorActions";
 import axios from "axios";
 
 export const loadUser = () => (dispatch, getState) => {
-  dispatch({ type: USER_LOADING });
+  const token = getState().user.token;
+  if (token) {
+    dispatch({ type: USER_LOADING });
 
-  axios
-    .get("/api/users/user", tokenConfig(getState))
-    .then((res) => {
-      dispatch({
-        type: USER_LOADED,
-        payload: res.data,
+    axios
+      .get("/api/users/user", tokenConfig(getState))
+      .then((res) => {
+        dispatch({
+          type: USER_LOADED,
+          payload: res.data,
+        });
+      })
+      .catch((err) => {
+        dispatch(returnErrors(err.response.data, err.response.status));
+        dispatch({
+          type: AUTH_ERROR,
+        });
       });
-    })
-    .catch((err) => {
-      dispatch(returnErrors(err.response.data, err.response.status));
-      dispatch({
-        type: AUTH_ERROR,
-      });
-    });
+  }
 };
 
 export const tokenConfig = (getState) => {
@@ -69,6 +74,33 @@ export const register = ({ firstname, lastname, email, password, role }) => (
       dispatch({
         type: REGISTER_FAIL,
       });
+    });
+};
+
+export const changePassword = (newPassword, password, email, id) => (
+  dispatch,
+  getState
+) => {
+  const body = { newPassword: newPassword, password: password, email: email };
+
+  axios
+    .patch("/api/users/update/" + id, body, tokenConfig(getState))
+    .then((res) => {
+      dispatch(clearErrors());
+      dispatch(logout());
+      dispatch({
+        type: CHANGE_PASSWORD,
+        payload: res.data,
+      });
+    })
+    .catch((err) => {
+      dispatch(
+        returnErrors(
+          err.response.data,
+          err.response.status,
+          "CHANGE_PASSWORD_FAIL"
+        )
+      );
     });
 };
 

@@ -1,46 +1,15 @@
-import Form from "react-validation/build/form";
 import React, { Component } from "react";
-import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
+
+import { AvForm, AvField } from "availity-reactstrap-validation";
+
+import { Alert, Row, Col } from "reactstrap";
 
 import { register } from "../actions/userActions";
 import { clearErrors } from "../actions/errorActions";
 
-import { isEmail } from "validator";
 import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
-import { Alert } from "reactstrap";
-
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Ce champ est obligatoir!
-      </div>
-    );
-  }
-};
-
-const email = (value) => {
-  if (!isEmail(value)) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Email invalid!
-      </div>
-    );
-  }
-};
-
-const vpassword = (value) => {
-  if (value.length < 6) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Le mot de passe doit contenir plus de 6 caractéres.
-      </div>
-    );
-  }
-};
 
 class Register extends Component {
   constructor(props) {
@@ -53,6 +22,7 @@ class Register extends Component {
       lastname: "",
       email: "",
       password: "",
+      confirmPassword: "",
       role: "user",
       message: null,
     };
@@ -66,8 +36,18 @@ class Register extends Component {
     clearErrors: PropTypes.func.isRequired,
   };
 
+  confirmpass = (value) => {
+    if (value == this.state.password) {
+      return (
+        <div className="alert alert-danger" role="alert">
+          Le mot de passe doit contenir plus de 6 caractéres.
+        </div>
+      );
+    }
+  };
+
   componentDidUpdate(prevProps) {
-    const { error, RegisterSuccess } = this.props;
+    const { error } = this.props;
 
     if (error !== prevProps.error) {
       if (error.id === "REGISTER_FAIL") {
@@ -102,84 +82,133 @@ class Register extends Component {
     };
 
     this.props.register(newUser);
-
-    this.form.validateAll();
   }
 
   render() {
     return (
-      <div className="col-md-12">
-        <div className="card card-container">
-          {this.state.message ? (
-            <Alert color="danger">{this.state.message}</Alert>
-          ) : null}
-          <Form
-            onSubmit={this.handleRegister}
-            ref={(c) => {
-              this.form = c;
-            }}
-          >
-            <div>
-              <div className="form-group">
-                <label htmlFor="firstname">First name</label>
-                <Input
-                  type="text"
-                  className="form-control"
-                  name="firstname"
-                  value={this.state.firstname}
-                  onChange={this.onChange}
-                  validations={[required]}
-                />
-              </div>
+      <div>
+        <div className="property_details_banner">
+          <div className="container">
+            <div className="row ">
+              <div className="col-xl-12 d-flex justify-content-center">
+                <div className="col-md-6">
+                  <div className="card card-container">
+                    <h2>Créer un compte</h2>
+                    <br />
+                    {this.state.message ? (
+                      <Alert color="danger">{this.state.message}</Alert>
+                    ) : null}
+                    <AvForm onValidSubmit={this.handleRegister}>
+                      <Row>
+                        <Col>
+                          <AvField
+                            label="Nom"
+                            type="text"
+                            name="firstname"
+                            value={this.state.firstname}
+                            onChange={this.onChange}
+                            validate={{
+                              required: {
+                                value: true,
+                                errorMessage: "Ce champs est requis.",
+                              },
+                              pattern: {
+                                value: "^[A-Za-z]+$",
+                                errorMessage:
+                                  "Ce champs doit contenir que des lettres.",
+                              },
+                            }}
+                          />
+                        </Col>
 
-              <div className="form-group">
-                <label htmlFor="lastname">Last name</label>
-                <Input
-                  type="text"
-                  className="form-control"
-                  name="lastname"
-                  value={this.state.lastname}
-                  onChange={this.onChange}
-                  validations={[required]}
-                />
-              </div>
+                        <Col>
+                          <AvField
+                            type="text"
+                            label="Prenom"
+                            name="lastname"
+                            value={this.state.lastname}
+                            validate={{
+                              required: {
+                                value: true,
+                                errorMessage: "Ce champs est requis.",
+                              },
+                              pattern: {
+                                value: "^[A-Za-z]+$",
+                                errorMessage:
+                                  "Ce champs doit contenir que des lettres.",
+                              },
+                            }}
+                            onChange={this.onChange}
+                          />
+                        </Col>
+                      </Row>
 
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <Input
-                  type="email"
-                  className="form-control"
-                  name="email"
-                  value={this.state.email}
-                  onChange={this.onChange}
-                  validations={[required, email]}
-                />
-              </div>
+                      <AvField
+                        type="email"
+                        name="email"
+                        label="Email"
+                        value={this.state.email}
+                        onChange={this.onChange}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: "Ce champs est requis.",
+                          },
+                          email: {
+                            value: true,
+                            errorMessage: "Email invalid.",
+                          },
+                        }}
+                      />
 
-              <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <Input
-                  type="password"
-                  className="form-control"
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.onChange}
-                  validations={[required, vpassword]}
-                />
-              </div>
+                      <AvField
+                        type="password"
+                        label="Mot de passe"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this.onChange}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: "Ce champs est requis.",
+                          },
+                          minLength: {
+                            value: 6,
+                            errorMessage:
+                              "Le mot de passe doit contenir au moins 6 caractères.",
+                          },
+                        }}
+                      />
 
-              <div className="form-group">
-                <button className="btn btn-primary btn-block">Sign Up</button>
+                      <AvField
+                        type="password"
+                        label="Confirmer mot de passe"
+                        name="confirmPassword"
+                        value={this.state.confirmPassword}
+                        onChange={this.onChange}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: "Ce champs est requis.",
+                          },
+                          match: {
+                            value: "password",
+                            errorMessage:
+                              "Les mots de passe doivent être identiques.",
+                          },
+                        }}
+                      />
+                      <div className="form-group">
+                        <button className="genric-btn primary radius btn-block">
+                          Sign Up
+                        </button>
+                      </div>
+                    </AvForm>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <CheckButton
-              style={{ display: "none" }}
-              ref={(c) => {
-                this.checkBtn = c;
-              }}
-            />
-          </Form>
+          </div>
         </div>
       </div>
     );

@@ -1,35 +1,15 @@
-import React, { Component, Fragment } from "react";
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
+import React, { Component } from "react";
 
-import { isEmail } from "validator";
+import { AvForm, AvField } from "availity-reactstrap-validation";
+
+import { Alert, Spinner } from "reactstrap";
 
 import { login } from "../actions/userActions";
 import { clearErrors } from "../actions/errorActions";
 
-import { Redirect } from "react-router";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Ce champ est obligatoir
-      </div>
-    );
-  }
-};
-
-const email = (value) => {
-  if (!isEmail(value)) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Email invalid
-      </div>
-    );
-  }
-};
+import { Link } from "react-router-dom";
 
 class Login extends Component {
   constructor(props) {
@@ -63,7 +43,7 @@ class Login extends Component {
     }
     if (isAuthenticated) {
       clearErrors();
-      this.props.history.push("/home");
+      this.props.history.push("/");
     }
   }
 
@@ -85,59 +65,84 @@ class Login extends Component {
   render() {
     const { isLoading } = this.props;
     return (
-      <div className="col-md-12">
-        <div className="card card-container">
-          <img
-            src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-            alt="profile-img"
-            className="profile-img-card"
-          />
+      <div className="property_details_banner">
+        <div className="container">
+          <div className="row">
+            <div className="col-xl-12 d-flex justify-content-center">
+              <div className="col-md-5">
+                <div className="card card-container">
+                  <img
+                    src="/img/final_footer.png"
+                    alt="profile-img"
+                    className="profile-img-card"
+                  />
 
-          <Form onSubmit={this.handleLogin}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <Input
-                type="text"
-                className="form-control"
-                name="email"
-                value={this.state.email}
-                onChange={this.onChange}
-                validations={[email]}
-              />
-            </div>
+                  <AvForm onValidSubmit={this.handleLogin}>
+                    <AvField
+                      type="email"
+                      name="email"
+                      label="Email"
+                      value={this.state.email}
+                      onChange={this.onChange}
+                      validate={{
+                        required: {
+                          value: true,
+                          errorMessage: "Ce champs est requis.",
+                        },
+                        email: {
+                          value: true,
+                          errorMessage: "Email invalid.",
+                        },
+                      }}
+                    />
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <Input
-                type="password"
-                className="form-control"
-                name="password"
-                value={this.state.password}
-                onChange={this.onChange}
-                validations={[required]}
-              />
-            </div>
+                    <AvField
+                      type="password"
+                      label="Mot de passe"
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.onChange}
+                      validate={{
+                        required: {
+                          value: true,
+                          errorMessage: "Ce champs est requis.",
+                        },
+                        minLength: {
+                          value: 6,
+                          errorMessage:
+                            "Le mot de passe doit contenir au moins 6 caractères.",
+                        },
+                      }}
+                    />
 
-            <div className="form-group">
-              <button
-                className="btn btn-primary btn-block"
-                disabled={isLoading}
-              >
-                {isLoading && (
-                  <span className="spinner-border spinner-border-sm"></span>
-                )}
-                <span>Login</span>
-              </button>
-            </div>
+                    <div className="form-group">
+                      <button
+                        className="genric-btn primary radius btn-block"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <Spinner size="sm" color="dark" />
+                        ) : (
+                          <span>Login</span>
+                        )}
+                      </button>
+                    </div>
 
-            {this.state.message && (
-              <div className="form-group">
-                <div className="alert alert-danger" role="alert">
-                  {this.state.message}
+                    {this.state.message && (
+                      <Alert color="danger">{this.state.message}</Alert>
+                    )}
+                  </AvForm>
                 </div>
               </div>
-            )}
-          </Form>
+            </div>
+          </div>
+          <p style={{ color: "white" }} class="text-center">
+            Vous n'avez pas de compte?
+            <Link to="/register" style={{ color: "#fd955d" }} href="#">
+              {" "}
+              Inscrivez-vous
+            </Link>
+          </p>
         </div>
       </div>
     );

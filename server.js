@@ -11,6 +11,14 @@ const app = express();
 
 app.use(bodyParser.json());
 
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  })
+);
+
+app.use("/public", express.static("public"));
+
 app.use(cors());
 
 app.use(morgan("dev"));
@@ -21,6 +29,7 @@ db.sequelize.sync({
 
 require("./api/routes/user.routes")(app);
 require("./api/routes/annonce.routes")(app);
+require("./api/routes/addresse.routes")(app);
 
 app.listen(4000, () => {
   console.log("Listening on port 4000");

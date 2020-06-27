@@ -2,40 +2,19 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const attributes = {
-    idadresse: {
-      type: DataTypes.INTEGER,
+    _id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true,
-      field: "idannonces",
+      field: "_id",
     },
-    adresse: {
+    adr: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: false,
       autoIncrement: false,
-      field: "adresse",
-    },
-    region: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: false,
-      autoIncrement: false,
-      field: "region",
-    },
-    ville: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: false,
-      autoIncrement: false,
-      field: "ville",
-    },
-    quartier: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      primaryKey: false,
-      autoIncrement: false,
-      field: "quartier",
+      field: "adr",
     },
   };
   const options = {
@@ -43,7 +22,7 @@ module.exports = (sequelize) => {
     comment: "",
     indexes: [],
   };
-  const AdressesModel = sequelize.define("adresse_model", attributes, options);
+  const AdressesModel = sequelize.define("adresses_model", attributes, options);
 
   return AdressesModel;
 };

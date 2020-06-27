@@ -1,47 +1,46 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Container } from "reactstrap";
 
-import { Provider } from "react-redux";
-import store from "./store";
+import { connect } from "react-redux";
 
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Navbar from "./components/Navbar";
-import AnnoncesList from "./components/AnnoncesList";
+import Header from "./components/Header";
+import Home from "./components/Home";
 import { loadUser } from "./actions/userActions";
-import AnnonceWizard from "./components/AnnonceWizard";
+import AnnoncePage from "./components/AnnoncePage";
+import Footer from "./components/Footer";
+import Annonces from "./components/Annonces";
+import Profile from "./components/Profile";
+import Contact from "./components/Contact";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import "./App.css";
 
 class App extends Component {
-  componentDidMount() {
-    store.dispatch(loadUser());
-  }
+  componentWillMount = () => {
+    this.props.loadUser();
+  };
 
   render() {
     return (
       <Router>
-        <Provider store={store}>
-          <div className="App">
-            <Navbar />
-            <Container>
-              <Switch>
-                <Route exact path="/home" component={AnnoncesList} />
-                <Route
-                  exact
-                  path="/annonces/create"
-                  component={AnnonceWizard}
-                />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/register" component={Register} />
-              </Switch>
-            </Container>
-          </div>
-        </Provider>
+        <div className="App">
+          <Header />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/annonce/:annonceId" component={AnnoncePage} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/annonces" component={Annonces} />
+            <Route path="/profile" component={Profile} />
+            <Route exact path="/contact" component={Contact} />
+          </Switch>
+          <Footer />
+        </div>
       </Router>
     );
   }
 }
 
-export default App;
+export default connect(null, { loadUser })(App);

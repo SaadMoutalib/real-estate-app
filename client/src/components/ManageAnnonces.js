@@ -30,7 +30,6 @@ class ManageAnnonces extends Component {
   }
 
   handleDelete = (id) => {
-    console.log("what");
     this.props.deleteAnnonce(id);
   };
 
@@ -59,7 +58,7 @@ class ManageAnnonces extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
       this.props.getAnnoncesOfUser(
-        this.props.match.params.iduser,
+        this.props.user.user._id,
         queryString.parse(this.props.location.search)
       );
     }
@@ -67,7 +66,7 @@ class ManageAnnonces extends Component {
 
   componentWillMount() {
     this.props.getAnnoncesOfUser(
-      this.props.match.params.iduser,
+      this.props.user.user._id,
       queryString.parse(this.props.location.search)
     );
   }
@@ -162,25 +161,31 @@ class ManageAnnonces extends Component {
                         <span>{" " + annonce.surface} m²</span>
                       </div>
                     </li>
-                    {annonce.type === "Terrain" ||
-                    annonce.type === "Bureaux" ? null : (
+                    {annonce.type === "Terrain" ? null : (
                       <>
+                        {annonce.type === "Bureaux" ? null : (
+                          <>
+                            <li className="list-inline-item">
+                              <div className="single_info_doc">
+                                <img src="/img/svg_icon/bed.svg" alt="" />
+                                <span>
+                                  {" " + annonce.nbrChambres} Chambres
+                                </span>
+                              </div>
+                            </li>
+                          </>
+                        )}
                         <li className="list-inline-item">
                           <div className="single_info_doc">
-                            <img src="/img/svg_icon/bed.svg" alt="" />
-                            <span>{" " + annonce.nbrChambres} Chambres</span>
+                            <img src="/img/svg_icon/bath.svg" alt="" />
+                            <span>
+                              {" " + annonce.nbrSallesDeBain} Salles de bain
+                            </span>
                           </div>
                         </li>
                       </>
                     )}
-                    <li className="list-inline-item">
-                      <div className="single_info_doc">
-                        <img src="/img/svg_icon/bath.svg" alt="" />
-                        <span>
-                          {" " + annonce.nbrSallesDeBain} Salles de bain
-                        </span>
-                      </div>
-                    </li>
+
                     <div className="float-right">
                       <li className="list-inline-item">
                         <button
@@ -207,10 +212,12 @@ ManageAnnonces.propTypes = {
   getAnnoncesOfUser: PropTypes.func.isRequired,
   deleteAnnonce: PropTypes.func.isRequired,
   annonce: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   annonce: state.annonce,
+  user: state.user,
 });
 
 const ManageAnnoncesWithRouter = withRouter(ManageAnnonces);

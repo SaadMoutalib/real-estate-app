@@ -72,7 +72,7 @@ class Profile extends Component {
                       exact
                       activeClassName="active"
                       className="nav-link"
-                      to={`${this.props.match.url}/post/${user._id}`}
+                      to={`${this.props.match.url}/post`}
                     >
                       Ajouter annonce
                     </NavLink>
@@ -81,7 +81,7 @@ class Profile extends Component {
                     <NavLink
                       activeClassName="active"
                       className="nav-link"
-                      to={`${this.props.match.url}/gerer/${user._id}`}
+                      to={`${this.props.match.url}/gerer`}
                     >
                       Gérer annonces
                     </NavLink>
@@ -90,7 +90,7 @@ class Profile extends Component {
                     <NavLink
                       activeClassName="active"
                       className="nav-link"
-                      to={`${this.props.match.url}/favoris/${user._id}`}
+                      to={`${this.props.match.url}/favoris`}
                     >
                       Mes Favoris
                     </NavLink>
@@ -109,12 +109,12 @@ class Profile extends Component {
         </nav>
         <Switch>
           <Route
-            path={`${this.props.match.path}/post/:iduser`}
+            path={`${this.props.match.path}/post`}
             component={AnnonceWizard}
           />
           <Route
             exact
-            path={`${this.props.match.path}/gerer/:iduser`}
+            path={`${this.props.match.path}/gerer`}
             render={(props) => <ManageAnnonces {...props} />}
           />
           <Route
@@ -122,7 +122,7 @@ class Profile extends Component {
             render={(props) => <PersonalInformation {...props} />}
           />
           <Route
-            path={`${this.props.match.path}/favoris/:iduser`}
+            path={`${this.props.match.path}/favoris`}
             render={(props) => <MesFavoris {...props} />}
           />
         </Switch>

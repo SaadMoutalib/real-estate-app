@@ -85,16 +85,18 @@ class AnnoncesList extends Component {
                       <span>{annonce.surface} m²</span>
                     </div>
                   </li>
-                  {annonce.type === "Terrain" ||
-                  annonce.type === "Bureaux" ? null : (
+                  {annonce.type === "Terrain" ? null : (
                     <>
-                      <li>
-                        <div className="single_info_doc">
-                          <img src="/img/svg_icon/bed.svg" alt="" />
-                          <span>{annonce.nbrChambres} Chambres</span>
-                        </div>
-                      </li>
-
+                      {annonce.type === "Bureaux" ? null : (
+                        <>
+                          <li>
+                            <div className="single_info_doc">
+                              <img src="/img/svg_icon/bed.svg" alt="" />
+                              <span>{annonce.nbrChambres} Chambres</span>
+                            </div>
+                          </li>
+                        </>
+                      )}
                       <li>
                         <div className="single_info_doc">
                           <img src="/img/svg_icon/bath.svg" alt="" />

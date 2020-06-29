@@ -106,7 +106,10 @@ class Header extends Component {
                           </li>
                           {isAuthenticated ? (
                             <li>
-                              <NavLink activeClassName="active" to="/profile">
+                              <NavLink
+                                activeClassName="active"
+                                to="/profile/gerer"
+                              >
                                 <i
                                   className="fa fa-user-o"
                                   aria-hidden="true"

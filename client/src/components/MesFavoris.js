@@ -9,7 +9,7 @@ import AddProperty from "./AddProperty";
 
 class MesFavoris extends Component {
   componentWillMount() {
-    this.props.getAnnoncesFavoris(this.props.match.params.iduser);
+    this.props.getAnnoncesFavoris(this.props.user.user._id);
   }
 
   render() {
@@ -52,10 +52,12 @@ class MesFavoris extends Component {
 MesFavoris.propTypes = {
   getAnnoncesFavoris: PropTypes.func.isRequired,
   annonce: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   annonce: state.annonce,
+  user: state.user,
 });
 
 const MesFavorisWithRouter = withRouter(MesFavoris);

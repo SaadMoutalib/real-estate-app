@@ -7,6 +7,10 @@ export const ANNONCES_LOADING = "ANNONCES_LOADING";
 export const CLEAR_ANNONCES = "CLEAR_ANNONCES";
 export const UPDATE_ANNONCE = "UPDATE_ANNONCES";
 
+export const ADD_FAVORIS = "ADD_FAVORIS";
+export const GET_FAVORIS = "GET_FAVORIS";
+export const DELETE_FAVORIS = "DELETE_FAVORIS";
+
 export const GET_REGIONS = "GET_REGIONS";
 export const GET_VILLES = "GET_VILLES";
 export const ADRESSES_LOADING = "ADRESSES_LOADING";

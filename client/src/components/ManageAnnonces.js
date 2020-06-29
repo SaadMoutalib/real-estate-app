@@ -2,11 +2,15 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getAnnoncesOfUser } from "../actions/annonceActions";
 import PropTypes from "prop-types";
-import { Spinner } from "reactstrap";
+import { Spinner, Form } from "reactstrap";
 import moment from "moment";
 import NumberFormat from "react-number-format";
 import Select from "react-select";
 import { deleteAnnonce } from "../actions/annonceActions";
+import { withRouter } from "react-router-dom";
+import queryString from "query-string";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { AvForm, AvField } from "availity-reactstrap-validation";
 
 const options = [
   { value: "En cours", label: "En cours" },
@@ -18,6 +22,11 @@ const options = [
 class ManageAnnonces extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      filter: "",
+      modal: false,
+    };
   }
 
   handleDelete = (id) => {
@@ -31,8 +40,36 @@ class ManageAnnonces extends Component {
     if (status === "En cours") return "badge-warning";
   };
 
+  handleSelectChange = (e) => {
+    var filter = {};
+    try {
+      this.setState({ filter: e.value });
+      filter = { filter: e.value };
+    } catch (e) {
+      this.setState({ filter: "" });
+      filter = {};
+    }
+
+    const stringified = queryString.stringify(filter);
+
+    this.props.location.search = stringified;
+    this.props.history.push(`${this.props.match.url}?${stringified}`);
+  };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.search !== this.props.location.search) {
+      this.props.getAnnoncesOfUser(
+        this.props.match.params.iduser,
+        queryString.parse(this.props.location.search)
+      );
+    }
+  }
+
   componentWillMount() {
-    this.props.getAnnoncesOfUser(this.props.match.params.iduser);
+    this.props.getAnnoncesOfUser(
+      this.props.match.params.iduser,
+      queryString.parse(this.props.location.search)
+    );
   }
 
   render() {
@@ -44,7 +81,16 @@ class ManageAnnonces extends Component {
           <div className="sidebar-heading">Vos annonces </div>
           <div className="list-group list-group-flush">
             <div className="col">
-              <Select name="ville" options={options} />
+              <Form>
+                <Select
+                  name="filter"
+                  options={options}
+                  onChange={this.handleSelectChange}
+                  defaultValue={this.state.filter}
+                  placeholder="Status..."
+                  isClearable={true}
+                />
+              </Form>
             </div>
           </div>
         </div>
@@ -145,15 +191,6 @@ class ManageAnnonces extends Component {
                           <i className="fa fa-trash"></i>
                         </button>
                       </li>
-                      <li className="list-inline-item">
-                        <button
-                          type="button"
-                          onClick={() => this.handleModify(annonce._id)}
-                          className="btn btn-primary"
-                        >
-                          <i className="fa fa-pencil"></i>
-                        </button>
-                      </li>
                     </div>
                   </ul>
                 </div>
@@ -176,6 +213,8 @@ const mapStateToProps = (state) => ({
   annonce: state.annonce,
 });
 
+const ManageAnnoncesWithRouter = withRouter(ManageAnnonces);
+
 export default connect(mapStateToProps, { deleteAnnonce, getAnnoncesOfUser })(
-  ManageAnnonces
+  ManageAnnoncesWithRouter
 );

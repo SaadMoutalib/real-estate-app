@@ -24,6 +24,10 @@ db.favoris = require("../api/models/favoris.model")(sequelize);
 
 db.users.belongsToMany(db.annonces, { through: db.favoris });
 db.annonces.belongsToMany(db.users, { through: db.favoris });
+db.users.hasMany(db.favoris);
+db.favoris.belongsTo(db.users);
+db.annonces.hasMany(db.favoris);
+db.favoris.belongsTo(db.annonces);
 
 db.regions.hasMany(db.villes, {
   as: "villes",

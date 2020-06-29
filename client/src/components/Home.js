@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import { Spinner } from "reactstrap";
 import AddProperty from "./AddProperty";
 import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 class Home extends Component {
   componentDidMount() {
@@ -36,7 +37,13 @@ class Home extends Component {
                     </div>
                   </div>
                   <div className="row">
-                    <AnnonceList annonce={this.props.annonce} />
+                    {annonces.length === 0 ? (
+                      <div className="col-xl-12 text-center">
+                        <h4> Aucune annonce trouvée</h4>
+                      </div>
+                    ) : (
+                      <AnnonceList annonce={this.props.annonce} />
+                    )}
                   </div>
                   <div className="row">
                     <div className="col-xl-12">
@@ -128,4 +135,6 @@ const mapStateToProps = (state) => ({
   annonce: state.annonce,
 });
 
-export default connect(mapStateToProps, { getAnnonces })(Home);
+const HomeWithRouter = withRouter(Home);
+
+export default connect(mapStateToProps, { getAnnonces })(HomeWithRouter);

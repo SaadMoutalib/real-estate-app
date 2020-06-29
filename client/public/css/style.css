@@ -3159,15 +3159,15 @@ h3 {
 /* line 31, ../../Arafath/CL/CL October/217. Real Estate/HTML/scss/_popular_property.scss */
 .popular_property .single_property .property_thumb .property_tag {
   position: absolute;
-  top: 25px;
-  left: 25px;
-  background: #fdae5c;
   padding: 8px 14px;
   color: #fff;
-  border-radius: 30px;
-  font-size: 13px;
+  font-size: 30px;
   font-weight: 500;
   z-index: 1;
+}
+.popular_property .single_property .property_thumb .property_tag i:hover {
+  color: #dc3545;
+  cursor: pointer;
 }
 
 /* line 42, ../../Arafath/CL/CL October/217. Real Estate/HTML/scss/_popular_property.scss */

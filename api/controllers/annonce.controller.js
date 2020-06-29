@@ -4,6 +4,7 @@ const { Op } = require("sequelize");
 const Annonce = db.annonces;
 const Photos = db.photos;
 const Fonctionalites = db.fonctionalites;
+const Favoris = db.favoris;
 
 exports.upload = (req, res) => {
   const images = [];
@@ -44,12 +45,18 @@ exports.findAll = (req, res) => {
   }
   if (req.query.prixMax && req.query.prixMin) {
     filter.where.prix = {
-      [Op.between]: [req.query.prixMin, req.query.prixMax],
+      [Op.and]: [
+        { [Op.gte]: req.query.prixMin },
+        { [Op.lte]: req.query.prixMax },
+      ],
     };
   }
   if (req.query.surfaceMin && req.query.surfaceMax) {
     filter.where.surface = {
-      [Op.between]: [req.query.surfaceMin, req.query.surfaceMax],
+      [Op.and]: [
+        { [Op.gte]: req.query.surfaceMin },
+        { [Op.lte]: req.query.surfaceMax },
+      ],
     };
   }
   if (req.query.nbrChambres) {
@@ -84,6 +91,7 @@ exports.findAll = (req, res) => {
       },
     },
   ];
+  console.log(filter);
 
   console.log(filter + "\n" + villeFilter);
   Annonce.findAll(filter)
@@ -98,25 +106,30 @@ exports.findAll = (req, res) => {
 };
 
 exports.findAllOfUser = (req, res) => {
-  Annonce.findAll({
-    include: [
-      { model: db.photos, as: "photos" },
-      {
-        model: db.adresses,
-        as: "adresse",
-        required: true,
+  var filter = { where: { userid: req.params.id } };
+
+  if (req.query.filter) {
+    filter.where.status = { [Op.eq]: req.query.filter };
+  }
+
+  filter.include = [
+    { model: db.photos, as: "photos" },
+    {
+      model: db.adresses,
+      as: "adresse",
+      required: true,
+      include: {
+        model: db.villes,
+        as: "ville",
         include: {
-          model: db.villes,
-          as: "ville",
-          include: {
-            model: db.regions,
-            as: "region",
-          },
+          model: db.regions,
+          as: "region",
         },
       },
-    ],
-    where: { userid: req.params.id },
-  })
+    },
+  ];
+
+  Annonce.findAll(filter)
     .then((data) => {
       res.send(data);
     })
@@ -127,16 +140,115 @@ exports.findAllOfUser = (req, res) => {
     });
 };
 
+exports.getFavoris = (req, res) => {
+  Favoris.findAll({
+    where: { usersModelId: req.params.id },
+    include: [
+      {
+        model: Annonce,
+        include: [
+          { model: db.photos, as: "photos" },
+          {
+            model: db.adresses,
+            as: "adresse",
+            required: true,
+            include: {
+              model: db.villes,
+              as: "ville",
+              include: {
+                model: db.regions,
+                as: "region",
+              },
+            },
+          },
+        ],
+      },
+    ],
+    attributes: ["annoncesModelId"],
+  })
+    .then((data) => {
+      res.status(200).send({ favoris: data });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message,
+      });
+    });
+};
+
+exports.getMesFavoris = (req, res) => {
+  Favoris.findAll({
+    where: { usersModelId: req.params.iduser },
+    include: [{ model: db.annonces, as: "annonce" }],
+  });
+};
+
+exports.deleteFavoris = (req, res) => {
+  Favoris.destroy({
+    where: {
+      annoncesModelId: req.params.idannonce,
+      usersModelId: req.params.iduser,
+    },
+  })
+    .then((data) => {
+      Annonce.increment("favoris", {
+        by: -1,
+        where: { _id: req.params.idannonce },
+      })
+        .then((result) => {
+          return res.status(200).send({
+            message: "Annonce favoris decremented",
+            favoris: result.favoris,
+          });
+        })
+        .catch((err) => {
+          return res.status(500).send({
+            message: err.message,
+          });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: err,
+      });
+    });
+};
+
+exports.addFavoris = (req, res) => {
+  Favoris.create({
+    usersModelId: req.body.iduser,
+    annoncesModelId: req.body.idannonce,
+  })
+    .then((data) => {
+      Annonce.increment("favoris", {
+        by: 1,
+        where: { _id: req.body.idannonce },
+      })
+        .then((result) => {
+          return res.status(200).send({
+            message: "Annonce favoris incremented",
+            favoris: result.favoris,
+          });
+        })
+        .catch((err) => {
+          return res.status(500).send({
+            message: err.message,
+          });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: err.message,
+      });
+    });
+};
+
 exports.create = (req, res) => {
-  console.log(req.body);
   if (
     !req.body.titre ||
     !req.body.userid ||
     !req.body.tel ||
     !req.body.description ||
-    !req.body.nbrChambres ||
-    !req.body.nbrPieces ||
-    !req.body.nbrSallesDeBain ||
     !req.body.etat ||
     !req.body.type ||
     !req.body.idadresse ||
@@ -200,6 +312,11 @@ exports.findOne = (req, res) => {
     include: [
       { model: db.photos, as: "photos" },
       { model: db.fonctionalites, as: "fonctionalite" },
+      {
+        model: db.users,
+        as: "user",
+        attributes: ["email", "firstname", "lastname"],
+      },
       {
         model: db.adresses,
         as: "adresse",

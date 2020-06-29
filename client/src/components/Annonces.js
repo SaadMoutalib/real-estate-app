@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Annonceslist from "./AnnoncesList";
+import AnnoncesList from "./AnnoncesList";
 import { getAnnonces } from "../actions/annonceActions";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -15,12 +15,6 @@ class Annonces extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
-      console.log(
-        "I RECEIVED" +
-          nextProps.location.search +
-          "\n" +
-          nextProps.location.search
-      );
       this.props.getAnnonces(queryString.parse(this.props.location.search));
     }
   }
@@ -67,7 +61,7 @@ class Annonces extends Component {
                   </div>
                 </div>
                 <div className="row">
-                  <Annonceslist annonce={this.props.annonce}></Annonceslist>
+                  <AnnoncesList annonce={this.props.annonce}></AnnoncesList>
                 </div>
               </>
             )}

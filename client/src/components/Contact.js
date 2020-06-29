@@ -1,6 +1,43 @@
 import React, { Component } from "react";
+import emailjs from "emailjs-com";
+import { AvForm, AvField } from "availity-reactstrap-validation";
+import { Alert, Spinner } from "reactstrap";
 
 export default class Contact extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      message: "",
+    };
+    this.sendEmail = this.sendEmail.bind(this);
+  }
+
+  beforeSubmit = (event) => {
+    event.persist();
+  };
+
+  sendEmail(event, values) {
+    event.preventDefault();
+    this.setState({ loading: true });
+
+    emailjs
+      .sendForm(
+        "gmail",
+        "contactus",
+        event.target,
+        "user_enuAZWcVYOwv64ST7gpWc"
+      )
+      .then(
+        (result) => {
+          this.setState({ loading: false, message: result.text });
+        },
+        (error) => {
+          this.setState({ loading: false, message: error.text });
+        }
+      );
+  }
+
   render() {
     return (
       <>
@@ -22,54 +59,99 @@ export default class Contact extends Component {
                 <h2 className="contact-title">Entrer en contact</h2>
               </div>
               <div className="col-lg-8">
-                <form
+                <AvForm
                   className="form-contact contact_form"
-                  method="post"
+                  onValidSubmit={this.sendEmail}
                   id="contactForm"
+                  beforeSubmitValidation={this.beforeSubmit}
                 >
                   <div className="row">
                     <div className="col-12">
                       <div className="form-group">
-                        <textarea
+                        <AvField
                           className="form-control w-100"
                           name="message"
                           id="message"
                           cols="30"
                           rows="9"
+                          type="textarea"
                           placeholder="Message"
-                        ></textarea>
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            minLength: {
+                              value: 10,
+                              errorMessage:
+                                "Your name must be between 20 and 255 characters",
+                            },
+                            maxLength: {
+                              value: 255,
+                              errorMessage:
+                                "Your name must be between 20 and 255 characters",
+                            },
+                          }}
+                        ></AvField>
                       </div>
                     </div>
                     <div className="col-sm-6">
                       <div className="form-group">
-                        <input
+                        <AvField
                           className="form-control valid"
-                          name="name"
+                          name="from_name"
                           id="name"
                           type="text"
                           placeholder="Entrez votre nom"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            pattern: {
+                              value: "^[A-Za-z ]+$",
+                              errorMessage:
+                                "Ce champs doit contenir que des lettres.",
+                            },
+                          }}
                         />
                       </div>
                     </div>
                     <div className="col-sm-6">
                       <div className="form-group">
-                        <input
+                        <AvField
                           className="form-control valid"
-                          name="email"
+                          name="from_email"
                           id="email"
                           type="email"
                           placeholder="Email"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            email: {
+                              value: true,
+                              errorMessage: "Email invalid.",
+                            },
+                          }}
                         />
                       </div>
                     </div>
                     <div className="col-12">
                       <div className="form-group">
-                        <input
+                        <AvField
                           className="form-control"
-                          name="subject"
+                          name="from_subject"
                           id="subject"
                           type="text"
                           placeholder="Entez le sujet"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                          }}
                         />
                       </div>
                     </div>
@@ -78,11 +160,25 @@ export default class Contact extends Component {
                     <button
                       type="submit"
                       className="button button-contactForm boxed-btn"
+                      disabled={this.state.loading}
                     >
-                      Envoyer
+                      {this.state.loading ? (
+                        <Spinner size="sm" color="dark" />
+                      ) : (
+                        <span>Envoyer</span>
+                      )}
                     </button>
+                    <br />
                   </div>
-                </form>
+                </AvForm>
+                {this.state.message == "OK" ? (
+                  <Alert color="success">Votre e-mail a bien été envoyé</Alert>
+                ) : this.state.message != "" ? (
+                  <Alert color="danger">
+                    Une erreur s'est produite, votre e-mail n'a pas pu être
+                    envoyé
+                  </Alert>
+                ) : null}
               </div>
               <div className="col-lg-3 offset-lg-1">
                 <div className="media contact-info">

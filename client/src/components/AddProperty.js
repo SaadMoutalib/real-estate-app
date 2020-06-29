@@ -18,10 +18,7 @@ class AddProperty extends Component {
             <div className="col-xl-5">
               <div className="call_add_action">
                 <span>+212 575 963 212</span>
-                <Link
-                  className="boxed-btn3-line"
-                  to={isAuthenticated ? "/profile/post/" + user._id : "/login"}
-                >
+                <Link className="boxed-btn3-line" to="/profile/post/">
                   Ajouter une annonce
                 </Link>
               </div>

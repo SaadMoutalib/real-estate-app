@@ -10,6 +10,10 @@ import { Carousel } from "react-responsive-carousel";
 import PropTypes from "prop-types";
 import AddProperty from "./AddProperty";
 
+import { AvForm, AvField } from "availity-reactstrap-validation";
+import { Alert, Spinner, Row, Col } from "reactstrap";
+import emailjs from "emailjs-com";
+
 const spinner = (
   <Fragment>
     <div className="col-md-12">
@@ -28,7 +32,35 @@ class AnnoncePage extends Component {
       activeIndex: 0,
       animating: false,
       items: [],
+      loading: false,
+      message: "",
     };
+    this.sendEmail = this.sendEmail.bind(this);
+  }
+
+  beforeSubmit = (event) => {
+    event.persist();
+  };
+
+  sendEmail(event, values) {
+    event.preventDefault();
+    this.setState({ loading: true });
+
+    emailjs
+      .sendForm(
+        "gmail",
+        "template_btLsUfOA",
+        event.target,
+        "user_enuAZWcVYOwv64ST7gpWc"
+      )
+      .then(
+        (result) => {
+          this.setState({ loading: false, message: result.text });
+        },
+        (error) => {
+          this.setState({ loading: false, message: error.text });
+        }
+      );
   }
 
   componentDidMount() {
@@ -67,42 +99,69 @@ class AnnoncePage extends Component {
   fonctionalites = (fonctionalite) => {
     return (
       <>
-        <b>jardin &nbsp;</b>
-        {fonctionalite.jardin ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
-        &nbsp; <b>terasse &nbsp;</b>
-        {fonctionalite.terasse ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
-        &nbsp; <b>garage &nbsp;</b>
-        {fonctionalite.garage ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
-        &nbsp; <b>ascenseur &nbsp;</b>
-        {fonctionalite.ascenseur ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
-        &nbsp; <b>concierge &nbsp;</b>
-        {fonctionalite.concierge ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
-        &nbsp; <b>piscine &nbsp;</b>
-        {fonctionalite.piscine ? (
-          <i class="fa fa-check fa-green" aria-hidden="true"></i>
-        ) : (
-          <i class="fa fa-times fa-red" aria-hidden="true"></i>
-        )}
+        <h4>Fonctionalitées</h4>
+        <Row className="justify-content-center">
+          <Col>
+            <p>
+              jardin
+              {fonctionalite.jardin ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+          <Col>
+            <p>
+              terasse
+              {fonctionalite.terasse ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+          <Col>
+            <p>
+              garage
+              {fonctionalite.garage ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+          <Col>
+            <p>
+              ascenseur
+              {fonctionalite.ascenseur ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+          <Col>
+            <p>
+              concierge
+              {fonctionalite.concierge ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+          <Col>
+            <p>
+              piscine
+              {fonctionalite.piscine ? (
+                <i className="fa fa-check fa-green" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-times fa-red" aria-hidden="true"></i>
+              )}
+            </p>
+          </Col>
+        </Row>
       </>
     );
   };
@@ -110,7 +169,7 @@ class AnnoncePage extends Component {
   render() {
     const { activeIndex } = this.state;
     const { annonces, loading } = this.props.annonce;
-    const items = annonces["photos"] ? annonces["photos"] : [];
+
     const {
       titre,
       prix,
@@ -124,6 +183,7 @@ class AnnoncePage extends Component {
       photos,
       adresse,
       fonctionalite,
+      user,
     } = annonces;
 
     return (
@@ -217,8 +277,9 @@ class AnnoncePage extends Component {
                   <p>{description}</p>
                 </div>
                 <div className="details_info">
-                  <h4>Fonctionalitées</h4>
-                  {typeof fonctionalite === "undefined"
+                  {type === "Terrain"
+                    ? null
+                    : typeof fonctionalite === "undefined"
                     ? "loading..."
                     : this.fonctionalites(fonctionalite)}
                 </div>
@@ -236,36 +297,126 @@ class AnnoncePage extends Component {
                   </div>
                 </section>
                 <div className="contact_field">
-                  <h3>Contact Us</h3>
-                  <form action="#">
+                  <h3></h3>
+                  <AvForm
+                    onValidSubmit={this.sendEmail}
+                    beforeSubmitValidation={this.beforeSubmit}
+                  >
                     <div className="row">
                       <div className="col-xl-6 col-md-6">
-                        <input type="text" placeholder="Your Name" />
+                        <AvField
+                          type="text"
+                          name="from_name"
+                          id="name"
+                          type="text"
+                          placeholder="Entrez votre nom"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            pattern: {
+                              value: "^[A-Za-z ]+$",
+                              errorMessage:
+                                "Ce champs doit contenir que des lettres.",
+                            },
+                          }}
+                        />
                       </div>
+                      <input
+                        type="hidden"
+                        name="to_email"
+                        value={typeof user != "undefined" ? user.email : null}
+                      />
+                      <input
+                        type="hidden"
+                        name="to_name"
+                        value={
+                          typeof user != "undefined"
+                            ? user.firstname + " " + user.lastname
+                            : null
+                        }
+                      />
                       <div className="col-xl-6 col-md-6">
-                        <input type="email" placeholder="Email" />
+                        <AvField
+                          type="email"
+                          name="from_email"
+                          placeholder="Email"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            email: {
+                              value: true,
+                              errorMessage: "Email invalid.",
+                            },
+                          }}
+                        />
                       </div>
                       <div className="col-xl-12">
-                        <input type="number" placeholder="Phone no." />
+                        <AvField
+                          type="number"
+                          placeholder="Numero de tel."
+                          name="tel"
+                          id="tel"
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                          }}
+                        />
                       </div>
                       <div className="col-xl-12">
-                        <textarea
-                          name=""
+                        <AvField
+                          type="textarea"
+                          name="message"
                           id=""
                           cols="30"
                           rows="10"
                           placeholder="Message"
-                        ></textarea>
+                          validate={{
+                            required: {
+                              value: true,
+                              errorMessage: "Ce champs est requis.",
+                            },
+                            minLength: {
+                              value: 10,
+                              errorMessage:
+                                "Your name must be between 20 and 255 characters",
+                            },
+                            maxLength: {
+                              value: 255,
+                              errorMessage:
+                                "Your name must be between 20 and 255 characters",
+                            },
+                          }}
+                        />
                       </div>
                       <div className="col-xl-12">
                         <div className="send_btn">
                           <button type="submit" className="send_btn">
-                            Send
+                            {this.state.loading ? (
+                              <Spinner size="sm" color="dark" />
+                            ) : (
+                              <span>Envoyer</span>
+                            )}
                           </button>
                         </div>
                       </div>
                     </div>
-                  </form>
+                  </AvForm>
+                  {this.state.message == "OK" ? (
+                    <Alert color="success">
+                      Votre e-mail a bien été envoyé
+                    </Alert>
+                  ) : this.state.message != "" ? (
+                    <Alert color="danger">
+                      Une erreur s'est produite, votre e-mail n'a pas pu être
+                      envoyé
+                    </Alert>
+                  ) : null}
                 </div>
               </div>
             </div>

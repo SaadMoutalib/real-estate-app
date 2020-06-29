@@ -31,7 +31,7 @@ export class ConfirmForm extends Component {
   };
 
   componentDidUpdate() {
-    this.props.history.push("/");
+    this.props.dispatch(this.props.history.push("/"));
   }
 
   static propTypes = {

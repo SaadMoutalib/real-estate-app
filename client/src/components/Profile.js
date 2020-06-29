@@ -12,6 +12,7 @@ import {
   NavLink,
 } from "react-router-dom";
 import PropTypes from "prop-types";
+import MesFavoris from "./MesFavoris";
 
 class Profile extends Component {
   logOut = () => {
@@ -85,6 +86,15 @@ class Profile extends Component {
                       Gérer annonces
                     </NavLink>
                   </li>
+                  <li className="nav-item">
+                    <NavLink
+                      activeClassName="active"
+                      className="nav-link"
+                      to={`${this.props.match.url}/favoris/${user._id}`}
+                    >
+                      Mes Favoris
+                    </NavLink>
+                  </li>
                 </>
               ) : null}
             </ul>
@@ -110,6 +120,10 @@ class Profile extends Component {
           <Route
             path={`${this.props.match.path}/information`}
             render={(props) => <PersonalInformation {...props} />}
+          />
+          <Route
+            path={`${this.props.match.path}/favoris/:iduser`}
+            render={(props) => <MesFavoris {...props} />}
           />
         </Switch>
       </>

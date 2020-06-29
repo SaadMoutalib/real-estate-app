@@ -45,6 +45,13 @@ module.exports = (app) => {
   router.get("/user/:id", annonces.findAllOfUser);
   router.patch("/update/:id", authenticate, annonces.update);
   router.delete("/delete/:id", authenticate, annonces.delete);
+  router.get("/favoris/:id", authenticate, annonces.getFavoris);
+  router.post("/addfavoris", authenticate, annonces.addFavoris);
+  router.delete(
+    "/deletefavoris/:iduser/:idannonce",
+    authenticate,
+    annonces.deleteFavoris
+  );
 
   app.use("/api/annonces", router);
 };

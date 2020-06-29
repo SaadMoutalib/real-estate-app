@@ -135,15 +135,7 @@ class Header extends Component {
                   <div className="col-xl-3 col-lg-3 d-none d-lg-block">
                     <div className="Appointment">
                       <div className="book_btn d-none d-lg-block">
-                        <Link
-                          to={
-                            isAuthenticated
-                              ? "/profile/post/" + user._id
-                              : "/login"
-                          }
-                        >
-                          Ajouter une annonce
-                        </Link>
+                        <Link to="/profile/post/">Ajouter une annonce</Link>
                       </div>
                     </div>
                   </div>

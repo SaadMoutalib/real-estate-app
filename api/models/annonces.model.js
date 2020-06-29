@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
     },
     prix: {
       type: DataTypes.STRING(45),
-      allowNull: true,
+      allowNull: false,
       primaryKey: false,
       autoIncrement: false,
       field: "prix",
@@ -31,16 +31,19 @@ module.exports = (sequelize) => {
     nbrChambres: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      defaultValue: 0,
       field: "nbrChambres",
     },
     nbrSallesDeBain: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      defaultValue: 0,
       field: "nbrSallesDeBain",
     },
     nbrPieces: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      defaultValue: 0,
       field: "nbrPieces",
     },
     tel: {

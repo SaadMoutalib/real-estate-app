@@ -7,7 +7,7 @@ import Select from "react-select";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import InputRange from "react-input-range";
-const queryString = require("query-string");
+import queryString from "query-string";
 
 const optionsType = [
   { value: "Appartement", label: "Appartement" },
@@ -73,11 +73,10 @@ var query = {};
 class SearchForm extends Component {
   constructor(props) {
     super(props);
-    const { search } = this.props.location;
-    const values = queryString.parse(search);
+
     this.state = {
-      prix: { min: 2000000, max: 20000000 },
-      surface: { min: 20, max: 300 },
+      prix: { min: 0, max: 20000000 },
+      surface: { min: 0, max: 300 },
       nbrChambres: 0,
       nbrSDB: 0,
       type: "",
@@ -87,6 +86,7 @@ class SearchForm extends Component {
 
   componentDidMount() {
     this.props.getVilles();
+    query = queryString.parse(this.props.location.search);
   }
 
   handleSelectChange = (input) => (e) => {
@@ -97,10 +97,11 @@ class SearchForm extends Component {
       query = { ...query, [input]: undefined };
       this.setState({ [input]: "" });
     }
-
+    console.log(query);
     const stringified = queryString.stringify(query);
 
     this.props.location.search = stringified;
+
     this.props.history.push(`/annonces?${stringified}`);
   };
 
@@ -119,6 +120,8 @@ class SearchForm extends Component {
 
   render() {
     const { villes, loading } = this.props.adresse;
+    const { location } = this.props;
+    const parsed = queryString.parse(location.search);
 
     const optionsVilles = [];
     villes.map((ville, id) => {
@@ -142,7 +145,9 @@ class SearchForm extends Component {
                   isLoading={loading}
                   options={optionsVilles}
                   onChange={this.handleSelectChange("ville")}
-                  defaultValue={this.state.ville}
+                  value={optionsVilles.find((op) => {
+                    return op.value === parsed.ville;
+                  })}
                   isClearable={true}
                 />
               </FormGroup>
@@ -153,7 +158,9 @@ class SearchForm extends Component {
                   styles={customStyles}
                   options={optionsType}
                   onChange={this.handleSelectChange("type")}
-                  defaultValue={this.state.type}
+                  value={optionsType.find((op) => {
+                    return op.value === parsed.type;
+                  })}
                   isClearable={true}
                 />
               </FormGroup>
@@ -165,7 +172,9 @@ class SearchForm extends Component {
                   styles={customStyles}
                   options={optionsNbrChambres}
                   onChange={this.handleSelectChange("nbrChambres")}
-                  defaultValue={this.state.nbrChambres}
+                  value={optionsNbrChambres.find((op, id) => {
+                    return op.value == parsed.nbrChambres;
+                  })}
                   isClearable={true}
                 />
               </FormGroup>
@@ -176,7 +185,9 @@ class SearchForm extends Component {
                   styles={customStyles}
                   options={optionsNbrSDB}
                   onChange={this.handleSelectChange("nbrSDB")}
-                  defaultValue={this.state.nbrSDB}
+                  value={optionsNbrSDB.find((op) => {
+                    return op.value == parsed.nbrSDB;
+                  })}
                   isClearable={true}
                 />
               </FormGroup>
@@ -192,7 +203,7 @@ class SearchForm extends Component {
                   formatLabel={(value) => `${value / 1000000} m`}
                   maxValue={100000000}
                   minValue={0}
-                  step={1000000}
+                  step={500000}
                   value={this.state.prix}
                   onChange={this.handleRangeChange("prix")}
                 />

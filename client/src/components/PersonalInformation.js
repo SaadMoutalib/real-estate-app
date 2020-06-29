@@ -136,7 +136,7 @@ class PersonalInformation extends Component {
                           {isLoading ? (
                             <Spinner size="sm" color="dark" />
                           ) : (
-                            <span>Login</span>
+                            <span>Confirmer</span>
                           )}
                         </button>
                       </div>

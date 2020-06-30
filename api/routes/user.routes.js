@@ -5,10 +5,13 @@ module.exports = (app) => {
 
   router.post("/", users.create);
   router.post("/login", users.login);
-  router.get("/", authenticate, users.findAll);
+  router.post("/admin/login", users.adminLogin);
+  router.get("/", users.findAll);
   //router.get("/:id", authenticate, users.findOne);
   router.get("/user", authenticate, users.findOne);
-  router.patch("/update/:id", authenticate, users.updatePassword);
+  router.patch("/update_password/:id", users.updatePassword);
+  router.patch("/update/:id", users.update);
+  router.delete("/delete/:id", users.delete);
 
   app.use("/api/users", router);
 };

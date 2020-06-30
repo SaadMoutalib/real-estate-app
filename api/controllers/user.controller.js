@@ -135,6 +135,45 @@ exports.findOne = (req, res) => {
     });
 };
 
+exports.adminLogin = (req, res) => {
+  Users.findOne({
+    where: { email: req.body.email },
+  })
+    .then((data) => {
+      if (!data) {
+        return res.status(400).send({
+          message: "Il n'existe aucun compte avec cet email",
+        });
+      } else if (data.role != "Admin") {
+        return res.status(401).send({
+          message: "Ce compte n'est pas un compte Administrateur",
+        });
+      } else {
+        const result = bcrypt.compareSync(req.body.password, data.password);
+        data.password = undefined;
+        if (result) {
+          const jsontoken = jwt.sign({ id: data._id }, config.secret, {
+            expiresIn: "1h",
+          });
+          return res.status(200).send({
+            message: "Authentifié avec succès",
+            user: data,
+            token: jsontoken,
+          });
+        } else {
+          return res.status(401).send({
+            message: "Mot de passe incorrect",
+          });
+        }
+      }
+    })
+    .catch((err) => {
+      res.status(400).send({
+        message: err.message,
+      });
+    });
+};
+
 exports.updatePassword = (req, res) => {
   Users.findOne({
     where: { email: req.body.email },
@@ -181,14 +220,35 @@ exports.updatePassword = (req, res) => {
     });
 };
 
+exports.update = (req, res) => {
+  Users.update(req.body, {
+    where: { _id: req.params.id },
+  })
+    .then((data) => {
+      return res.status(200).send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err,
+      });
+    });
+};
+
 exports.delete = (req, res) => {
   Users.destroy({
     where: {
       _id: req.params.id,
     },
-  }).catch((err) => {
-    res.status(500).send({
-      message: err,
+    truncate: false,
+  })
+    .then((data) => {
+      res.status(200).send({
+        message: "deleted succesfully",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err,
+      });
     });
-  });
 };

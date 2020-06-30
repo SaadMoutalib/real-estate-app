@@ -84,7 +84,7 @@ export const changePassword = (newPassword, password, email, id) => (
   const body = { newPassword: newPassword, password: password, email: email };
 
   axios
-    .patch("/api/users/update/" + id, body, tokenConfig(getState))
+    .patch("/api/users/update_password/" + id, body, tokenConfig(getState))
     .then((res) => {
       dispatch(clearErrors());
       dispatch(logout());

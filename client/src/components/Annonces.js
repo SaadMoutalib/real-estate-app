@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { Spinner } from "reactstrap";
 import SearchForm from "./SearchForm";
 import AddProperty from "./AddProperty";
+
 const queryString = require("query-string");
 
 class Annonces extends Component {

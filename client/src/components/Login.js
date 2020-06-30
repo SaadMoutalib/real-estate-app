@@ -123,7 +123,7 @@ class Login extends Component {
                         {isLoading ? (
                           <Spinner size="sm" color="dark" />
                         ) : (
-                          <span>Login</span>
+                          <span>Se Connecter</span>
                         )}
                       </button>
                     </div>

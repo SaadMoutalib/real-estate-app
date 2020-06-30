@@ -43,8 +43,8 @@ module.exports = (app) => {
   );
   router.post("/fonctionalite/", authenticate, annonces.addFonctionalite);
   router.get("/user/:id", annonces.findAllOfUser);
-  router.patch("/update/:id", annonces.update);
-  router.delete("/delete/:id", annonces.delete);
+  router.patch("/update/:id", authenticate, annonces.update);
+  router.delete("/delete/:id", authenticate, annonces.delete);
   router.get("/favoris/:id", authenticate, annonces.getFavoris);
   router.post("/addfavoris", authenticate, annonces.addFavoris);
   router.delete(

@@ -13,6 +13,7 @@ import AddProperty from "./AddProperty";
 import { AvForm, AvField } from "availity-reactstrap-validation";
 import { Alert, Spinner, Row, Col } from "reactstrap";
 import emailjs from "emailjs-com";
+import { Helmet } from "react-helmet";
 
 const spinner = (
   <Fragment>
@@ -63,7 +64,7 @@ class AnnoncePage extends Component {
       );
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getAnnonce(this.props.match.params.annonceId);
   }
 
@@ -188,6 +189,9 @@ class AnnoncePage extends Component {
 
     return (
       <div>
+        <Helmet>
+          <title>{titre + " - Maroc Estate"}</title>
+        </Helmet>
         <div className="property_details_banner">
           <div className="container">
             <div className="row">

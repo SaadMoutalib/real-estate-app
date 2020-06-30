@@ -62,7 +62,7 @@ class Profile extends Component {
                   className="nav-link"
                   to={`${this.props.match.url}/information`}
                 >
-                  Information personnel
+                  Informations personnelles
                 </NavLink>
               </li>
               {isAuthenticated ? (

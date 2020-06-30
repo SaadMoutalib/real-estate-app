@@ -86,7 +86,7 @@ export const register = ({ firstname, lastname, email, password, role }) => (
   dispatch
 ) => {
   const body = { firstname, lastname, email, password, role };
-
+  console.log(body);
   axios
     .post("/api/users/", body)
     .then((res) => {

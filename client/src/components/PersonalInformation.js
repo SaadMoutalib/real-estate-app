@@ -34,6 +34,10 @@ class PersonalInformation extends Component {
     );
   };
 
+  componentDidMount() {
+    document.title = "Informations personnelles - Maroc Estate";
+  }
+
   componentDidUpdate(prevProps) {
     const { error } = this.props;
 

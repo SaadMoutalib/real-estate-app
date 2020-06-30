@@ -90,6 +90,10 @@ class AnnonceWizard extends Component {
     });
   };
 
+  componentDidMount() {
+    document.title = "Ajouter Annonce - Maroc Estate";
+  }
+
   Step = (values, step) => {
     switch (step) {
       case 1:

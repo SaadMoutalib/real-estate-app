@@ -13,6 +13,10 @@ export default class Contact extends Component {
     this.sendEmail = this.sendEmail.bind(this);
   }
 
+  componentDidMount() {
+    document.title = "Contact - Maroc Estate";
+  }
+
   beforeSubmit = (event) => {
     event.persist();
   };

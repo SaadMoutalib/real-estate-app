@@ -11,6 +11,9 @@ class MesFavoris extends Component {
   componentWillMount() {
     this.props.getAnnoncesFavoris(this.props.user.user._id);
   }
+  componentDidMount() {
+    document.title = "Mes favoris - Maroc Estate";
+  }
 
   render() {
     const { annonces, loading } = this.props.annonce;

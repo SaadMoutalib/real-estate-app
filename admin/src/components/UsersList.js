@@ -57,9 +57,9 @@ function UsersList() {
     dispatch(loadUsers());
   }, []);
 
-  const addData = (user) => {
-    console.log(user);
-    dispatch(register(user));
+  const addData = (data) => {
+    console.log(data);
+    dispatch(register(data));
   };
 
   // We need to keep the table from resetting the pageIndex when we

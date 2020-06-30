@@ -11,12 +11,18 @@ const queryString = require("query-string");
 
 class Annonces extends Component {
   componentDidMount() {
-    this.props.getAnnonces(queryString.parse(this.props.location.search));
+    document.title = "Annonces - Maroc Estate";
+    let query = queryString.parse(this.props.location.search);
+    query.status = "Actif";
+    this.props.getAnnonces(query);
+    console.log(query);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
-      this.props.getAnnonces(queryString.parse(this.props.location.search));
+      let query = queryString.parse(this.props.location.search);
+      query.status = "Actif";
+      this.props.getAnnonces(query);
     }
   }
 

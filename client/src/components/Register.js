@@ -36,6 +36,10 @@ class Register extends Component {
     clearErrors: PropTypes.func.isRequired,
   };
 
+  componentDidMount() {
+    document.title = "S'enregistrer - Maroc Estate";
+  }
+
   confirmpass = (value) => {
     if (value == this.state.password) {
       return (

@@ -6,12 +6,12 @@ module.exports = (app) => {
   router.post("/", users.create);
   router.post("/login", users.login);
   router.post("/admin/login", users.adminLogin);
-  router.get("/", users.findAll);
+  router.get("/", authenticate, users.findAll);
   //router.get("/:id", authenticate, users.findOne);
   router.get("/user", authenticate, users.findOne);
   router.patch("/update_password/:id", users.updatePassword);
-  router.patch("/update/:id", users.update);
-  router.delete("/delete/:id", users.delete);
+  router.patch("/update/:id", authenticate, users.update);
+  router.delete("/delete/:id", authenticate, users.delete);
 
   app.use("/api/users", router);
 };

@@ -9,9 +9,6 @@ import Select from "react-select";
 import { deleteAnnonce } from "../actions/annonceActions";
 import { withRouter } from "react-router-dom";
 import queryString from "query-string";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { AvForm, AvField } from "availity-reactstrap-validation";
-
 const options = [
   { value: "En cours", label: "En cours" },
   { value: "Actif", label: "Actif" },
@@ -37,6 +34,8 @@ class ManageAnnonces extends Component {
 
   badge = (status) => {
     if (status === "En cours") return "badge-warning";
+    else if (status === "Actif") return "badge-success";
+    else return "badge-danger";
   };
 
   handleSelectChange = (e) => {
@@ -65,6 +64,7 @@ class ManageAnnonces extends Component {
   }
 
   componentWillMount() {
+    document.title = "Mes annonces - Maroc Estate";
     this.props.getAnnoncesOfUser(
       this.props.user.user._id,
       queryString.parse(this.props.location.search)

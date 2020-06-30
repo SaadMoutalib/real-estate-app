@@ -216,8 +216,7 @@ const EnhancedTable = ({
   };
 
   const addUserHandler = (user) => {
-    const newData = data.concat([user]);
-    addData(newData);
+    addData(user);
   };
 
   // Render the UI for your table

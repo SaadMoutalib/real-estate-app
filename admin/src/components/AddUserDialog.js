@@ -18,8 +18,8 @@ import Alert from "@material-ui/lab/Alert";
 import { clearErrors } from "../actions/errorActions";
 
 const initialUser = {
-  firstName: "",
-  lastName: "",
+  firstname: "",
+  lastname: "",
   email: "",
   password: "",
   role: "Utilisateur",
@@ -51,6 +51,7 @@ const AddUserDialog = (props) => {
   const handleClose = () => {
     setOpen(false);
     resetSwitch();
+    dispatch(clearErrors());
   };
 
   const error = useSelector((state) => state.error);
@@ -60,15 +61,17 @@ const AddUserDialog = (props) => {
       setMessage(error.msg.message);
     } else {
       setMessage(null);
-      console.log(message);
-      dispatch(clearErrors());
     }
-  }, [message]);
+  }, [error]);
 
   const handleAdd = (event) => {
     addUserHandler(user);
     setUser(initialUser);
-    switchState.addMultiple ? setOpen(true) : setOpen(false);
+
+    if (error.id === "REGISTER_SECCESS") {
+      dispatch(clearErrors());
+      switchState.addMultiple ? setOpen(true) : setOpen(false);
+    }
   };
 
   const handleChange = (name) => ({ target: { value } }) => {
@@ -93,11 +96,7 @@ const AddUserDialog = (props) => {
             <DialogContentText>
               Ajouter un Utilisateur a la base de données
             </DialogContentText>
-            {message && (
-              <Alert severity="error">
-                This is an error alert — check it out!
-              </Alert>
-            )}
+            {message && <Alert severity="error">{message}</Alert>}
 
             <TextField
               autoFocus
@@ -106,7 +105,7 @@ const AddUserDialog = (props) => {
               type="text"
               fullWidth
               value={user.firstName}
-              onChange={handleChange("firstName")}
+              onChange={handleChange("firstname")}
               required
             />
             <TextField
@@ -115,7 +114,7 @@ const AddUserDialog = (props) => {
               type="text"
               fullWidth
               value={user.lastName}
-              onChange={handleChange("lastName")}
+              onChange={handleChange("lastname")}
               required
             />
             <TextField

@@ -45,6 +45,11 @@ export default function (state = initialState, action) {
         isAuthenticated: true,
         isLoading: false,
       };
+    case DELETE_USER:
+      return {
+        ...state,
+        users: state.users.filter((user) => user._id !== action.payload),
+      };
     case USERS_LOADED:
       return {
         ...state,
@@ -67,6 +72,7 @@ export default function (state = initialState, action) {
     case REGISTER_SUCCESS:
       return {
         ...state,
+        users: state.users.concat(action.payload.user),
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:

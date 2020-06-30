@@ -32,6 +32,10 @@ class Login extends Component {
     clearErrors: PropTypes.func.isRequired,
   };
 
+  componentDidMount() {
+    document.title = "Login " + document.title;
+  }
+
   componentDidUpdate(prevProps) {
     const { error, isAuthenticated } = this.props;
     if (error !== prevProps.error) {

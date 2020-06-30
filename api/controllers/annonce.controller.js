@@ -39,7 +39,9 @@ exports.upload = (req, res) => {
 
 exports.findAll = (req, res) => {
   var filter = { where: {} };
-
+  if (req.query.status) {
+    filter.where.status = { [Op.eq]: req.query.status };
+  }
   if (req.query.type) {
     filter.where.type = { [Op.eq]: req.query.type };
   }

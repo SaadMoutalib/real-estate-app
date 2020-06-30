@@ -12,7 +12,8 @@ import { withRouter } from "react-router-dom";
 
 class Home extends Component {
   componentDidMount() {
-    this.props.getAnnonces();
+    document.title = "Acceuil - Maroc Estate";
+    this.props.getAnnonces({ status: "Actif" });
   }
 
   render() {
